@@ -1,0 +1,153 @@
+cd ~/trading-bot
+source venv/bin/activate
+python3 dashboard_final.py  
+  # Kill ALL bot instances
+pkill -9 -f live_asia_spot_long.py
+
+# Kill old dashboard too (you have old one running)
+pkill -9 -f dashboard_final.py
+
+# Wait a moment
+sleep 2
+
+# Check RAM now
+free -h
+
+# Start fresh with ONLY ONE instance
+bot-start
+
+# Verify only ONE bot is running
+ps aux | grep live_asia_spot_long.py 
+**YES! The commands start BOTH the bot AND dashboard together.**
+
+## **Here's what to do:**
+
+### **1. Start everything:**
+```bash
+bot-start
+```
+
+You'll see output like:
+```
+✅ Bot LIVE
+✅ Dashboard LIVE
+```
+
+### **2. That's it! Just close MobaXterm**
+
+Since both are running with `nohup` and `&`, they're **detached** from your terminal session. They'll keep running 24/7 even after you:
+- ✅ Close MobaXterm
+- ✅ Turn off your computer
+- ✅ Disconnect from internet
+
+---
+
+## **When you come back later:**
+
+### **Open MobaXterm and check status:**
+```bash
+bot-status
+```
+
+### **View logs:**
+```bash
+bot-logs     # Press Ctrl+C to exit
+dash-logs    # Press Ctrl+C to exit
+```
+
+### **Stop everything:**
+```bash
+bot-stop
+```
+
+### **Restart everything:**
+```bash
+bot-restart
+```
+
+---
+
+## **Quick Summary:**
+
+1. Run `bot-start`
+2. Wait for "✅ Bot LIVE" and "✅ Dashboard LIVE"
+3. **Just close MobaXterm** - done!
+
+Your bot and dashboard are now running 24/7 in the background. You don't need to press anything special or keep the terminal open.
+
+**Access your dashboard anytime at:** `http://YOUR_PUBLIC_IP:8080`
+to 15 mins start bot  aggressively
+ORB_LAST_CLOSE = orb.iloc[-1]['close']
+POST_ORB_DATA = df.copy()
+
+log.info("ORB BUILT SUCCESSFULLY")
+Time Window: Last 15 minutes")
+Candles Used: {len(orb)}")
+RH: ${RH:, .2f}")
+RL: ${RL:,.2f}")
+Range: ${RH-RL:,.2f}")
+Last Close: ${ORB_LAST_CLOSE:, .2f}")
+Starting signal scanning NOW ... ")
+log.info("=" * 80)
+log.info("")
+
+except Exception as e:
+log.error(f"ORB build failed: {e}", exc_info=True)
+time.sleep(60)
+continue
+
+log.info(f"
+log.info(f"
+log.info(f"
+log.info(f"
+log.info(f"
+log.info(f"
+log.info("
+
+# Continue immediately to signal scanning
+continue
+
+2. Line ~456-458 (Signal Scanning Data):
+
+python
+
+# OLD:
+start_ts = int((now -timedelta(hours=5)).timestamp() * 1000)
+df_live = fetch_1m_since(start_ts)
+post = df_live[df_live['ts'].dt.hour >=4].copy()
+
+# NEW:
+start_ts = int((now - timedelta(minutes=20)).timestamp() * 1000)
+df_live = fetch_1m_since(start_ts)
+post = df_live.copy()
+
+3. Line~473 (Already done):
+
+python
+
+if curr_price > RH * 0.90 and pred_rr >= 0.0:
+1. Line~388-412 (ORB Building) - Replace entire section:
+
+python
+
+# Build ORB immediately using last 15 minutes
+if RH is None and today_str not in trades_by_date:
+log.info("")
+log.info("=" * 80)
+log.info("BUILDING ORB FROM LAST 15 MINUTES")
+log.info("=" * 80)
+
+try:
+# Get last 30 minutes of data
+start_ts = int((now - timedelta(minutes=30)).timestamp() * 1000)
+df = fetch_1m_since(start_ts)
+
+if len(df) < 15:
+log.warning(f"Insufficient data: only {len(df)} candles - need 15+")
+time.sleep(60)
+continue
+
+# Use last 15 minutes as ORB
+orb = df.iloc[-15:]
+
+RH, RL = orb['high'].max(), orb['low'].min()
